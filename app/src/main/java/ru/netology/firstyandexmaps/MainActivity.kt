@@ -13,36 +13,40 @@ import com.yandex.runtime.image.ImageProvider
 
 
 class MainActivity : AppCompatActivity() {
-    private val MAPKIT_API_KEY = "" //Вставить свой ключ
-    private var mapView: MapView? = null
+    private val MAPKIT_API_KEY = "a1350e43-6644-467b-a3a2-88591bdd73fc" //Вставить свой ключ
+    private lateinit var mapView: MapView
+//    private  var  icon = ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24)
+    private val placemarkTapListener = MapObjectTapListener { _, point ->
+        Toast.makeText(
+            this@MainActivity,
+            "Tapped the point (${point.longitude}, ${point.latitude})", Toast.LENGTH_SHORT).show()
+        true
+    }
+
+    private val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {
+            val placemark = map.mapObjects.addPlacemark(point,
+                )
+            placemark.setText("Point")
+            placemark.addTapListener(placemarkTapListener)
+        }
+
+        override fun onMapLongTap(map: Map, p1: Point) {
+            val placemark = map.mapObjects.addPlacemark(p1, )
+            placemark.setIcon(ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24))
+            placemark.addTapListener(placemarkTapListener)
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mapView = findViewById(R.id.map)
-        val placemarkTapListener = MapObjectTapListener { _, point ->
-            Toast.makeText(
-                this@MainActivity,
-                "Tapped the point (${point.longitude}, ${point.latitude})", Toast.LENGTH_SHORT).show()
-            true
-        }
-        val icon = ImageProvider.fromResource(this, R.drawable.ic_baseline_place_24)
+        super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
         MapKitFactory.initialize(this)
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val inputListener = object : InputListener{
-            override fun onMapTap(p0: Map, p1: Point) {
-                val placemark = mapView?.map?.mapObjects?.addPlacemark(p1,icon )
-                placemark?.addTapListener(placemarkTapListener)
-            }
-
-            override fun onMapLongTap(p0: Map, p1: Point) {
-                val placemark = mapView?.map?.mapObjects?.addPlacemark(p1,icon )
-                placemark?.addTapListener(placemarkTapListener)
-            }
-
-        }
-        mapView?.map?.addInputListener(inputListener)
+        mapView = findViewById(R.id.map)
+        val map = mapView.mapWindow.map
+        map.addInputListener(inputListener)
 
 
     }
@@ -59,4 +63,5 @@ class MainActivity : AppCompatActivity() {
         MapKitFactory.getInstance().onStop();
         super.onStop()
     }
+
 }
