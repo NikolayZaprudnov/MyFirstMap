@@ -3,6 +3,8 @@ package ru.netology.firstyandexmaps
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.InputListener
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private val MAPKIT_API_KEY = "a1350e43-6644-467b-a3a2-88591bdd73fc" //Вставить свой ключ
     private lateinit var mapView: MapView
 //    private  var  icon = ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24)
+    val drawable = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_baseline_place_24)
+    val bitmap = requireNotNull(drawable?.toBitmap())
     private val placemarkTapListener = MapObjectTapListener { _, point ->
         Toast.makeText(
             this@MainActivity,
@@ -27,13 +31,14 @@ class MainActivity : AppCompatActivity() {
         override fun onMapTap(map: Map, point: Point) {
             val placemark = map.mapObjects.addPlacemark(point,
                 )
+            placemark.setIcon(ImageProvider.fromBitmap(bitmap))
             placemark.setText("Point")
             placemark.addTapListener(placemarkTapListener)
         }
 
         override fun onMapLongTap(map: Map, p1: Point) {
             val placemark = map.mapObjects.addPlacemark(p1, )
-            placemark.setIcon(ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24))
+            placemark.setIcon(ImageProvider.fromBitmap(bitmap))
             placemark.addTapListener(placemarkTapListener)
         }
     }
@@ -54,12 +59,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart();
-        mapView?.onStart();
+        mapView.onStart();
     }
 
 
     override fun onStop() {
-        mapView?.onStop();
+        mapView.onStop();
         MapKitFactory.getInstance().onStop();
         super.onStop()
     }
