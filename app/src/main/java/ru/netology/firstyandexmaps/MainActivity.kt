@@ -18,8 +18,7 @@ class MainActivity : AppCompatActivity() {
     private val MAPKIT_API_KEY = "a1350e43-6644-467b-a3a2-88591bdd73fc" //Вставить свой ключ
     private lateinit var mapView: MapView
 //    private  var  icon = ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24)
-    val drawable = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_baseline_place_24)
-    val bitmap = requireNotNull(drawable?.toBitmap())
+
     private val placemarkTapListener = MapObjectTapListener { _, point ->
         Toast.makeText(
             this@MainActivity,
@@ -31,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         override fun onMapTap(map: Map, point: Point) {
             val placemark = map.mapObjects.addPlacemark(point,
                 )
+            val drawable = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_baseline_place_24)
+            val bitmap = requireNotNull(drawable?.toBitmap())
             placemark.setIcon(ImageProvider.fromBitmap(bitmap))
             placemark.setText("Point")
             placemark.addTapListener(placemarkTapListener)
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity() {
 
         override fun onMapLongTap(map: Map, p1: Point) {
             val placemark = map.mapObjects.addPlacemark(p1, )
+            val drawable = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_baseline_place_24)
+            val bitmap = requireNotNull(drawable?.toBitmap())
             placemark.setIcon(ImageProvider.fromBitmap(bitmap))
             placemark.addTapListener(placemarkTapListener)
         }
