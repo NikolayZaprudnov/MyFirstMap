@@ -10,5 +10,19 @@
      android:id="@+id/map"
      android:layout_width="match_parent"
      android:layout_height="match_parent"/>
+ <ImageButton
+  android:id="@+id/listPoint"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     android:padding="16dp"
+     app:srcCompat="@drawable/ic_baseline_density_medium_24"
+     />
+ <ListView
+     android:id="@+id/ListPoints"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
