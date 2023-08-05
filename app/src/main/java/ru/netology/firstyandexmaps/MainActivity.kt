@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +26,8 @@ class MainActivity : AppCompatActivity() {
     private val MAPKIT_API_KEY = "a1350e43-6644-467b-a3a2-88591bdd73fc" //Вставить свой ключ
     private lateinit var mapView: MapView
     private var placemarkList: ArrayList<UserPoint> = ArrayList()
-    private lateinit var listPoint: Button
     lateinit var arrayAdapter: ArrayAdapter<UserPoint>
 
-//    private  var  icon = ImageProvider.fromResource(applicationContext, R.drawable.ic_baseline_place_24)
 
     private val placemarkTapListener = MapObjectTapListener { mapObject, point ->
         val placemark = mapObject as PlacemarkMapObject
@@ -72,12 +71,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onMapLongTap(map: Map, p1: Point) {
+            val userPoint = UserPoint(placemarkList.size,
+                p1.latitude,
+                p1.longitude,
+                "Point" + placemarkList.size.toString())
             val placemark = map.mapObjects.addPlacemark(p1)
             val drawable =
                 ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_baseline_place_24)
             val bitmap = requireNotNull(drawable?.toBitmap())
             placemark.setIcon(ImageProvider.fromBitmap(bitmap))
             placemark.addTapListener(placemarkTapListener)
+            placemark.userData = userPoint
         }
     }
 
@@ -94,11 +98,19 @@ class MainActivity : AppCompatActivity() {
         val listPointView = findViewById<ListView>(R.id.ListPoints)
         arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, placemarkList )
         listPointView.adapter = arrayAdapter
-        listPoint.findViewById<Button>(R.id.listPoint)
+        val listPoint = findViewById<ImageButton>(R.id.listPoint)
         listPoint.setOnClickListener {
-            listPointView.visibility = View.VISIBLE
+            if (listPointView.visibility == View.GONE){
+            listPointView.visibility = View.VISIBLE} else {
+                listPointView.visibility = View.GONE
+            }
         }
+        listPointView.setOnItemClickListener { _, _, position, _ ->
+            val clicked = placemarkList[position]
+            goToPoint(clicked)
+            listPointView.visibility = View.GONE
 
+        }
 
 
     }
@@ -136,11 +148,11 @@ class MainActivity : AppCompatActivity() {
     }
     private fun goToPoint(userPoint: UserPoint) {
         val targetPoint = Point(userPoint.latitude, userPoint.longitude)
-//        mapView.map.move(
-////            CameraPosition(targetPoint, 15.0f),
-////            Animation(Animation.Type.SMOOTH, 0f),
-////            null
-//        )
+        mapView.map.move(
+            CameraPosition(targetPoint, 15.0f, 15.0f, 15.0f),
+            Animation(Animation.Type.SMOOTH, 10f),
+            null
+        )
     }
 }
 
